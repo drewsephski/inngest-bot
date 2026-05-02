@@ -83,7 +83,7 @@ function addSecurityHeaders(response: NextResponse): void {
 	// Content Security Policy (adjust as needed)
 	response.headers.set(
 		'Content-Security-Policy',
-		"default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://clerk.accounts.dev https://*.clerk.dev; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self'; connect-src 'self' https://*.clerk.dev https://api.openrouter.ai https://api.github.com; frame-src 'self' https://*.clerk.dev;"
+		"default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.clerk.accounts.dev https://*.clerk.dev https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' https: data: blob: https://img.clerk.com https://svgl.app; font-src 'self'; connect-src 'self' https://*.clerk.accounts.dev https://*.clerk.dev https://api.openrouter.ai https://api.github.com https://api.svgl.app; frame-src 'self' https://*.clerk.accounts.dev https://*.clerk.dev https://challenges.cloudflare.com; worker-src 'self' blob:;"
 	);
 }
 

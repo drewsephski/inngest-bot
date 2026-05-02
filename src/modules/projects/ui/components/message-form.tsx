@@ -97,54 +97,76 @@ export const MessageForm = ({ projectId }: MessageFormProps) => {
 		<Form {...form}>
 			{showUsage && <Usage points={usage.remainingPoints} msBeforeNext={usage.msBeforeNext} />}
 
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className={cn(
-					'bg-sidebar dark:bg-sidebar relative rounded-xl border p-4 pt-1 transition-all',
-					isFocused && 'shadow-xs',
-					showUsage && 'rounded-t-none'
-				)}
-			>
-				<FormField
-					control={form.control}
-					name='value'
-					render={({ field }) => (
-						<TextareaAutosize
-							{...field}
-							disabled={isPending}
-							onFocus={() => setIsFocused(true)}
-							onBlur={() => setIsFocused(false)}
-							minRows={2}
-							maxRows={8}
-							className='w-full resize-none border-none bg-transparent pt-4 outline-none'
-							placeholder='What would you like to build?'
-							onKeyDown={(e) => {
-								if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-									e.preventDefault();
-									form.handleSubmit(onSubmit)(e);
-								}
-							}}
-						/>
+			<div className='relative'>
+				{/* Ambient subtle glow on focus */}
+				<div
+					className={cn(
+						'bg-primary/10 pointer-events-none absolute -inset-1.5 rounded-xl opacity-0 blur-xl transition-all duration-500 ease-out',
+						isFocused && 'opacity-100',
+						showUsage && 'rounded-t-none'
 					)}
 				/>
+				{/* Edge rim glow */}
+				<div
+					className={cn(
+						'ring-primary/25 pointer-events-none absolute -inset-px rounded-xl opacity-0 ring-1 blur-[1px] transition-all duration-500 ease-out ring-inset',
+						isFocused && 'opacity-100',
+						showUsage && 'rounded-t-none'
+					)}
+				/>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className={cn(
+						'bg-sidebar dark:bg-sidebar relative overflow-hidden rounded-xl border p-4 pt-1 transition-all duration-500 ease-out',
+						isFocused && 'border-primary/40 shadow-[0_8px_30px_rgba(0,0,0,0.08)]',
+						showUsage && 'rounded-t-none'
+					)}
+				>
+					<FormField
+						control={form.control}
+						name='value'
+						render={({ field }) => (
+							<TextareaAutosize
+								{...field}
+								disabled={isPending}
+								onFocus={() => setIsFocused(true)}
+								onBlur={() => setIsFocused(false)}
+								minRows={2}
+								maxRows={8}
+								className={cn(
+									'w-full resize-none border-none bg-transparent pt-4 outline-none',
+									!field.value &&
+									'overflow-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+								)}
+								placeholder='What would you like to build?'
+								onKeyDown={(e) => {
+									if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+										e.preventDefault();
+										form.handleSubmit(onSubmit)(e);
+									}
+								}}
+							/>
+						)}
+					/>
 
-				<div className='flex items-end justify-between gap-x-2 pt-2'>
-					<div className='text-muted-foreground font-mono text-[10px]'>
-						<kbd className='bg-muted text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium select-none'>
-							<span>&#8984;</span>Enter
-						</kbd>
-						&nbsp;to submit
+					<div className='flex items-end justify-between gap-x-2 pt-2'>
+						<div className='text-muted-foreground font-mono text-[10px]'>
+							<kbd className='bg-muted text-muted-foreground pointer-events-none ml-auto inline-flex h-5 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium select-none'>
+								<span>&#8984;</span>Enter
+							</kbd>
+							&nbsp;to submit
+						</div>
+
+						<Button
+							disabled={isDisabled}
+							isLoading={isPending}
+							className={cn('size-8 rounded-full', isDisabled && 'bg-muted-foreground border')}
+						>
+							{!isPending && <ArrowUpIcon className='size-4' />}
+						</Button>
 					</div>
-
-					<Button
-						disabled={isDisabled}
-						isLoading={isPending}
-						className={cn('size-8 rounded-full', isDisabled && 'bg-muted-foreground border')}
-					>
-						{!isPending && <ArrowUpIcon className='size-4' />}
-					</Button>
-				</div>
-			</form>
+				</form>
+			</div>
 		</Form>
 	);
 };

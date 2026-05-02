@@ -86,16 +86,7 @@ const HomePage = () => {
 
 						{/* Form Section */}
 						<div className={cn('mt-12 max-w-2xl', mounted && 'animate-fade-in-up opacity-0 [animation-delay:0.5s]')}>
-							{/* Refined ambient glow — even, balanced wrapping around input */}
-							<div className='group relative rounded-2xl'>
-								{/* Even base glow — symmetrical radial distribution */}
-								<div className='pointer-events-none absolute -inset-1 rounded-2xl bg-[radial-gradient(ellipse_at_center,var(--primary)/6%,var(--primary)/2%,transparent_70%)] opacity-100 blur-lg' />
-								{/* Focus intensification — expands and brightens evenly */}
-								<div className='pointer-events-none absolute -inset-2 rounded-2xl bg-[radial-gradient(ellipse_at_center,var(--primary)/12%,var(--primary)/5%,transparent_65%)] opacity-0 blur-xl transition-all duration-500 ease-out group-focus-within:opacity-100' />
-								{/* Edge rim — clean border glow on focus */}
-								<div className='ring-primary/20 pointer-events-none absolute -inset-px rounded-2xl opacity-0 ring-1 blur-[2px] transition-all duration-500 ease-out ring-inset group-focus-within:opacity-100' />
-								<ProjectForm />
-							</div>
+							<ProjectForm />
 						</div>
 
 						{/* Trust Indicators */}

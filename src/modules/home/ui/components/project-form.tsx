@@ -171,58 +171,78 @@ export const ProjectForm = () => {
 	return (
 		<Form {...form}>
 			<section className='space-y-4'>
-				<form
-					onSubmit={form.handleSubmit(onSubmit)}
-					className={cn(
-						'from-card to-card/95 relative overflow-hidden rounded-2xl border bg-gradient-to-b p-5 pt-2 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-500 ease-out',
-						isFocused && 'border-primary/25 shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
-					)}
-				>
-					<FormField
-						control={form.control}
-						name='value'
-						render={({ field }) => (
-							<TextareaAutosize
-								{...field}
-								disabled={isPending}
-								onFocus={() => setIsFocused(true)}
-								onBlur={() => setIsFocused(false)}
-								minRows={2}
-								maxRows={8}
-								className='placeholder:text-muted-foreground/50 w-full resize-none border-none bg-transparent pt-3 text-lg leading-relaxed transition-all duration-300 outline-none'
-								placeholder='Describe your business — what you do, who you serve, and what your website should say.'
-								onKeyDown={(e) => {
-									if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-										e.preventDefault();
-										form.handleSubmit(onSubmit)(e);
-									}
-								}}
-								autoFocus
-							/>
+				<div className='relative rounded-2xl'>
+					{/* Ambient subtle glow on focus */}
+					<div
+						className={cn(
+							'bg-primary/10 pointer-events-none absolute -inset-1.5 rounded-2xl opacity-0 blur-xl transition-all duration-500 ease-out',
+							isFocused && 'opacity-100'
 						)}
 					/>
-
-					<div className='flex items-end justify-between gap-x-3 pt-3'>
-						<div className='text-muted-foreground flex items-center gap-2.5 text-[11px] font-medium'>
-							<kbd className='bg-muted/80 text-muted-foreground border-border/50 pointer-events-none inline-flex h-6 items-center gap-1 rounded-lg border px-2 font-mono text-[11px] shadow-sm select-none'>
-								<span>⌘</span>Enter
-							</kbd>
-							<span className='text-muted-foreground/70 font-serif italic'>to submit</span>
-						</div>
-
-						<Button
-							disabled={isDisabled}
-							isLoading={isPending}
-							className={cn(
-								'size-10 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 ease-out',
-								// No hover:scale — removed per design brief
-								isDisabled && 'bg-muted-foreground/50'
+					{/* Edge rim glow */}
+					<div
+						className={cn(
+							'ring-primary/25 pointer-events-none absolute -inset-px rounded-2xl opacity-0 ring-1 blur-[1px] transition-all duration-500 ease-out ring-inset',
+							isFocused && 'opacity-100'
+						)}
+					/>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className={cn(
+							'from-card to-card/95 relative overflow-hidden rounded-2xl border bg-gradient-to-b p-5 pt-2 shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-500 ease-out',
+							isFocused && 'border-primary/40 shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
+						)}
+					>
+						<FormField
+							control={form.control}
+							name='value'
+							render={({ field }) => (
+								<TextareaAutosize
+									{...field}
+									disabled={isPending}
+									onFocus={() => setIsFocused(true)}
+									onBlur={() => setIsFocused(false)}
+									minRows={2}
+									maxRows={8}
+									className={cn(
+										'placeholder:text-muted-foreground/50 w-full resize-none border-none bg-transparent pt-3 text-lg leading-relaxed transition-all duration-300 outline-none',
+										!field.value &&
+										'overflow-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+									)}
+									placeholder='Describe your business — what you do, who you serve, and what your website should say.'
+									onKeyDown={(e) => {
+										if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+											e.preventDefault();
+											form.handleSubmit(onSubmit)(e);
+										}
+									}}
+									autoFocus
+								/>
 							)}
-						>
-							{!isPending && <ArrowUpIcon className='size-4.5' />}
-						</Button>
-					</div>
-				</form>
+						/>
+
+						<div className='flex items-end justify-between gap-x-3 pt-3'>
+							<div className='text-muted-foreground flex items-center gap-2.5 text-[11px] font-medium'>
+								<kbd className='bg-muted/80 text-muted-foreground border-border/50 pointer-events-none inline-flex h-6 items-center gap-1 rounded-lg border px-2 font-mono text-[11px] shadow-sm select-none'>
+									<span>⌘</span>Enter
+								</kbd>
+								<span className='text-muted-foreground/70 font-serif italic'>to submit</span>
+							</div>
+
+							<Button
+								disabled={isDisabled}
+								isLoading={isPending}
+								className={cn(
+									'size-10 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-all duration-300 ease-out',
+									// No hover:scale — removed per design brief
+									isDisabled && 'bg-muted-foreground/50'
+								)}
+							>
+								{!isPending && <ArrowUpIcon className='size-4.5' />}
+							</Button>
+						</div>
+					</form>
+				</div>
 
 				{/* Business-friendly template chips */}
 				<div className='hidden max-w-3xl flex-wrap justify-start gap-2 md:flex'>
