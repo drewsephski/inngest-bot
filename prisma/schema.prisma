@@ -64,9 +64,15 @@ model Usage {
   expire DateTime?
 }
 
+enum AIProvider {
+  OPENAI
+  OPENROUTER
+}
+
 model UserSettings {
-  userId String @id
-  apiKey String
+  userId   String     @id
+  apiKey   String
+  provider AIProvider @default(OPENAI)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

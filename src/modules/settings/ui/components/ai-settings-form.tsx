@@ -1,3 +1,5 @@
+/* eslint-disable sort-keys */
+/* eslint-disable react-hooks/incompatible-library */
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -5,7 +7,7 @@ import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { EyeIcon, EyeOffIcon, Loader2Icon, Trash2Icon } from 'lucide-react';
+import { ChevronDownIcon, EyeIcon, EyeOffIcon, Loader2Icon, Trash2Icon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
@@ -30,9 +32,12 @@ export const AISettingsForm = () => {
 
 	const { data: aiSettings, isLoading } = useQuery(trpc.settings.getAISettings.queryOptions());
 
-	const form = useForm<z.infer<typeof AISettingsSchema>>({
+	type AISettingsFormValues = z.infer<typeof AISettingsSchema>;
+
+	const form = useForm<AISettingsFormValues>({
 		defaultValues: {
 			apiKey: aiSettings?.apiKey || '',
+			provider: (aiSettings?.provider as AISettingsFormValues['provider']) || 'OPENAI',
 		},
 		resolver: zodResolver(AISettingsSchema),
 	});
@@ -60,6 +65,7 @@ export const AISettingsForm = () => {
 
 				form.reset({
 					apiKey: '',
+					provider: 'OPENAI',
 				});
 
 				toast.success('API Key removed successfully');
@@ -81,7 +87,10 @@ export const AISettingsForm = () => {
 	const isPending = saveAISettings.isPending || removeAISettings.isPending;
 
 	useEffect(() => {
-		if (aiSettings) form.setValue('apiKey', aiSettings.apiKey);
+		if (aiSettings) {
+			form.setValue('apiKey', aiSettings.apiKey);
+			form.setValue('provider', aiSettings.provider as AISettingsFormValues['provider']);
+		}
 	}, [aiSettings, form]);
 
 	if (isLoading) {
@@ -93,6 +102,27 @@ export const AISettingsForm = () => {
 		);
 	}
 
+	const provider = form.watch('provider');
+
+	const getProviderConfig = (prov: string) => {
+		if (prov === 'OPENROUTER') {
+			return {
+				label: 'OpenRouter API Key',
+				placeholder: 'sk-or-v1-•••••••••••••••••••••••••••••••',
+				docsUrl: 'https://openrouter.ai/settings/keys',
+				docsLabel: 'OpenRouter',
+			};
+		}
+		return {
+			label: 'OpenAI API Key',
+			placeholder: 'sk-proj-•••••••••••••••••••••••••••••••',
+			docsUrl: 'https://platform.openai.com/account/api-keys',
+			docsLabel: 'OpenAI',
+		};
+	};
+
+	const providerConfig = getProviderConfig(provider);
+
 	return (
 		<>
 			<ConfirmDialog />
@@ -102,15 +132,40 @@ export const AISettingsForm = () => {
 					<FormField
 						disabled={isPending}
 						control={form.control}
+						name='provider'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>AI Provider</FormLabel>
+								<FormControl>
+									<div className='relative'>
+										<select
+											{...field}
+											className='border-input bg-background ring-offset-background focus-visible:ring-ring flex h-9 w-full appearance-none rounded-md border px-3 py-2 text-sm font-medium opacity-100 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium hover:opacity-80 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
+										>
+											<option value='OPENAI'>OpenAI</option>
+											<option value='OPENROUTER'>OpenRouter</option>
+										</select>
+										<ChevronDownIcon className='text-muted-foreground pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2' />
+									</div>
+								</FormControl>
+								<FormDescription>Choose your preferred AI provider for code generation.</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<FormField
+						disabled={isPending}
+						control={form.control}
 						name='apiKey'
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>OpenAI API Key</FormLabel>
+								<FormLabel>{providerConfig.label}</FormLabel>
 								<div className='relative'>
 									<FormControl className='pr-12'>
 										<Input
 											type={apiKeyVisible ? 'text' : 'password'}
-											placeholder='sk-proj-•••••••••••••••••••••••••••••••'
+											placeholder={providerConfig.placeholder}
 											{...field}
 										/>
 									</FormControl>
@@ -131,21 +186,12 @@ export const AISettingsForm = () => {
 								<FormDescription>
 									Get your API Key from{' '}
 									<Link
-										href='https://platform.openai.com/account/api-keys'
+										href={providerConfig.docsUrl}
 										target='_blank'
 										rel='noopener noreferrer'
 										className='text-primary font-medium underline underline-offset-2 opacity-100 hover:opacity-75'
 									>
-										OpenAI
-									</Link>
-									. Make sure your account has sufficient{' '}
-									<Link
-										href='https://platform.openai.com/settings/organization/billing/credit-grants'
-										target='_blank'
-										rel='noopener noreferrer'
-										className='text-primary font-medium underline underline-offset-2 opacity-100 hover:opacity-75'
-									>
-										credit grants
+										{providerConfig.docsLabel}
 									</Link>
 									. The key is automatically deleted after 30 days.
 								</FormDescription>

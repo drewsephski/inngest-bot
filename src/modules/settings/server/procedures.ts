@@ -17,10 +17,11 @@ export const settingsRouter = createTRPCRouter({
 			},
 		});
 
-		if (!settings) return { apiKey: '' };
+		if (!settings) return { apiKey: '', provider: 'OPENAI' };
 
 		return {
 			apiKey: decrypt(settings.apiKey),
+			provider: settings.provider,
 		};
 	}),
 	removeAISettings: protectedProcedure.mutation(async ({ ctx }) => {
@@ -38,9 +39,9 @@ export const settingsRouter = createTRPCRouter({
 	}),
 	saveAISettings: protectedProcedure.input(AISettingsSchema).mutation(async ({ ctx, input }) => {
 		const { userId } = ctx.auth;
-		const { apiKey } = input;
+		const { apiKey, provider } = input;
 
-		const { error, success } = await verifyAISettings(apiKey);
+		const { error, success } = await verifyAISettings(apiKey, provider);
 
 		if (!success) throw new TRPCError({ code: 'BAD_REQUEST', message: error || 'Failed to verify API key' });
 
@@ -49,10 +50,12 @@ export const settingsRouter = createTRPCRouter({
 		const settings = await db.userSettings.upsert({
 			create: {
 				apiKey: encryptedApiKey,
+				provider,
 				userId,
 			},
 			update: {
 				apiKey: encryptedApiKey,
+				provider,
 			},
 			where: {
 				userId,

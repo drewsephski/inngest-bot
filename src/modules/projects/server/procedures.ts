@@ -29,7 +29,7 @@ export const projectsRouter = createTRPCRouter({
 
 		if (!apiKey) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'API key not found' });
 
-		const { error, success } = await verifyAISettings(apiKey);
+		const { error, success } = await verifyAISettings(apiKey, settings.provider);
 
 		if (!success) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: error || 'Failed to verify API key' });
 
