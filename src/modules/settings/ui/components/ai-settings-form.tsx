@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ChevronDownIcon, EyeIcon, EyeOffIcon, Loader2Icon, Trash2Icon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, Loader2Icon, Trash2Icon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
@@ -17,6 +17,7 @@ import { AISettingsSchema } from '@/modules/settings/schemas/ai-settings-schema'
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useConfirm } from '@/hooks/use-confirm';
 import { useTRPC } from '@/trpc/client';
 
@@ -136,18 +137,17 @@ export const AISettingsForm = () => {
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>AI Provider</FormLabel>
-								<FormControl>
-									<div className='relative'>
-										<select
-											{...field}
-											className='border-input bg-background ring-offset-background focus-visible:ring-ring flex h-9 w-full appearance-none rounded-md border px-3 py-2 text-sm font-medium opacity-100 shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium hover:opacity-80 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-										>
-											<option value='OPENAI'>OpenAI</option>
-											<option value='OPENROUTER'>OpenRouter</option>
-										</select>
-										<ChevronDownIcon className='text-muted-foreground pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2' />
-									</div>
-								</FormControl>
+								<Select onValueChange={field.onChange} defaultValue={field.value}>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder='Select AI provider' />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										<SelectItem value='OPENAI'>OpenAI</SelectItem>
+										<SelectItem value='OPENROUTER'>OpenRouter</SelectItem>
+									</SelectContent>
+								</Select>
 								<FormDescription>Choose your preferred AI provider for code generation.</FormDescription>
 								<FormMessage />
 							</FormItem>

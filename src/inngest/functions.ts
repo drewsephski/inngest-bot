@@ -33,7 +33,7 @@ export const codeAgentFunction = inngest.createFunction(
 	async ({ event, step }) => {
 		const projectId = event.data.projectId as string;
 
-		const apiKey = await step.run('get-api-key', async () => {
+		const { apiKey, provider } = await step.run('get-api-key', async () => {
 			const project = await db.project.findUnique({
 				select: {
 					userId: true,
@@ -53,7 +53,10 @@ export const codeAgentFunction = inngest.createFunction(
 
 			if (!settings) throw new NonRetriableError('AI settings not found');
 
-			return decrypt(settings.apiKey);
+			return {
+				apiKey: decrypt(settings.apiKey),
+				provider: settings.provider,
+			};
 		});
 
 		const sandboxId = await step.run('get-sandbox-id', async () => {
@@ -109,7 +112,15 @@ export const codeAgentFunction = inngest.createFunction(
 					return result;
 				},
 			},
-			model: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4.1' }),
+			model:
+				provider === 'OPENROUTER'
+					? openai({
+							apiKey,
+							baseUrl: 'https://openrouter.ai/api/v1',
+							defaultParameters: { temperature: 0.1 },
+							model: 'openrouter/free',
+						})
+					: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4.1' }),
 			name: 'code-agent',
 			system: PROMPT,
 			tools: [
@@ -224,14 +235,30 @@ export const codeAgentFunction = inngest.createFunction(
 
 		const fragmentTitleGenerator = createAgent({
 			description: 'A fragment title generator',
-			model: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4o-mini' }),
+			model:
+				provider === 'OPENROUTER'
+					? openai({
+							apiKey,
+							baseUrl: 'https://openrouter.ai/api/v1',
+							defaultParameters: { temperature: 0.1 },
+							model: 'openrouter/free',
+						})
+					: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4o-mini' }),
 			name: 'fragment-title-generator',
 			system: FRAGMENT_TITLE_PROMPT,
 		});
 
 		const responseGenerator = createAgent({
 			description: 'A response title generator',
-			model: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4o-mini' }),
+			model:
+				provider === 'OPENROUTER'
+					? openai({
+							apiKey,
+							baseUrl: 'https://openrouter.ai/api/v1',
+							defaultParameters: { temperature: 0.1 },
+							model: 'openrouter/free',
+						})
+					: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4o-mini' }),
 			name: 'response-title-generator',
 			system: RESPONSE_PROMPT,
 		});

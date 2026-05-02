@@ -122,3 +122,24 @@ export const getAISettingsErrorMessage = (error: unknown): string => {
 
 	return 'Failed to verify API key';
 };
+
+/**
+ * Gets error message for OpenRouter-specific errors.
+ * Use this when handling errors from OpenRouter SDK directly.
+ */
+export const getOpenRouterErrorMessage = (error: { message: string; code: string }): string => {
+	switch (error.code) {
+		case 'unauthorized':
+			return 'Invalid OpenRouter API key. Please check your key and try again';
+		case 'payment_required':
+			return 'Not enough credits in your OpenRouter account. Please add credits and try again';
+		case 'rate_limited':
+			return 'OpenRouter rate limit reached. Please try again in a moment';
+		case 'bad_request':
+			return `Invalid request: ${error.message}`;
+		case 'server_error':
+			return 'OpenRouter server error. Please try again later';
+		default:
+			return error.message || 'Failed to verify OpenRouter API key';
+	}
+};

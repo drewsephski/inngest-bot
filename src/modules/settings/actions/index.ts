@@ -1,9 +1,9 @@
 'use server';
 
-import { OpenRouter } from '@openrouter/sdk';
 import { OpenAI } from 'openai';
 
 import type { AIProvider } from '@/generated/prisma/enums';
+import { verifyOpenRouterApiKey } from '@/lib/openrouter';
 import { getAISettingsErrorMessage } from '@/lib/utils';
 
 const verifyOpenAISettings = async (apiKey: string) => {
@@ -24,20 +24,21 @@ const verifyOpenAISettings = async (apiKey: string) => {
 };
 
 const verifyOpenRouterSettings = async (apiKey: string) => {
-	const client = new OpenRouter({
-		apiKey,
-	});
+	// Format validation first
+	if (!apiKey.startsWith('sk-or-')) {
+		throw new Error('Invalid OpenRouter API key format. Must start with sk-or-');
+	}
 
-	// Verify API key by sending a minimal chat request using a free model
-	const result = await client.chat.send({
-		chatRequest: {
-			maxTokens: 5,
-			messages: [{ content: 'hi', role: 'user' }],
-			model: 'openai/gpt-4o-mini',
-		},
-	});
+	if (apiKey.length < 20) {
+		throw new Error('Invalid OpenRouter API key. Too short');
+	}
 
-	if (!result.choices?.[0]?.message?.content) throw new Error('No response from OpenRouter API');
+	// Use the proper OpenRouter SDK for API verification
+	const result = await verifyOpenRouterApiKey(apiKey);
+
+	if (!result.success) {
+		throw new Error(result.error || 'Failed to verify OpenRouter API key');
+	}
 
 	return true;
 };
