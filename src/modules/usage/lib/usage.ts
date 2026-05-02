@@ -39,6 +39,14 @@ export const getUsageStatus = async () => {
 	const usageTracker = await getUsageTracker();
 	const result = await usageTracker.get(userId);
 
+	// If user has pro access but no usage record exists yet, create one
+	if (hasProAccess && !result) {
+		// Initialize by consuming 0 points to create the record
+		await usageTracker.consume(userId, 0);
+		const freshResult = await usageTracker.get(userId);
+		return freshResult;
+	}
+
 	// Check if user has pro access but their current usage reflects free tier limits
 	// This happens when they upgrade from free to pro but the usage record wasn't updated
 	if (hasProAccess && result && result.remainingPoints < PRO_POINTS - GENERATION_COST) {
@@ -51,6 +59,7 @@ export const getUsageStatus = async () => {
 		});
 
 		// Get fresh status with pro limits
+		await usageTracker.consume(userId, 0);
 		const freshResult = await usageTracker.get(userId);
 		return freshResult;
 	}
