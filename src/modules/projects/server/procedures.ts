@@ -114,7 +114,14 @@ export const projectsRouter = createTRPCRouter({
 				},
 			});
 
-			if (!project) throw new TRPCError({ code: 'NOT_FOUND', message: 'Project not found' });
+			// Use consistent error message to prevent project ID enumeration attacks
+			// This prevents attackers from distinguishing between "project doesn't exist" vs "you don't have access"
+			if (!project) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'Project not found or access denied',
+				});
+			}
 
 			return project;
 		}),

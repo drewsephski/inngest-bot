@@ -194,6 +194,22 @@ export const SITE_CONFIG: Metadata = {
 	},
 } as const;
 
+/**
+ * Pre-validated external links
+ * These are validated at build time to ensure they point to allowed domains
+ */
 export const LINKS = {
+	GITHUB: 'https://github.com/drewsephski',
 	INSTAGRAM: 'https://instagram.com/drew.sepeczi',
 } as const;
+
+/**
+ * Allowed domains for external link validation
+ * Any external links must target these domains
+ */
+export const ALLOWED_EXTERNAL_DOMAINS = [
+	'instagram.com',
+	'www.instagram.com',
+	'github.com',
+	'www.github.com',
+] as const;

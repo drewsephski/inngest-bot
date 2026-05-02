@@ -143,3 +143,72 @@ export const getOpenRouterErrorMessage = (error: { message: string; code: string
 			return error.message || 'Failed to verify OpenRouter API key';
 	}
 };
+
+/**
+ * Validates and sanitizes an external URL to prevent open redirect vulnerabilities
+ * @param url - The URL to validate
+ * @param allowedDomains - Optional array of allowed domains (defaults to common social platforms)
+ * @returns The sanitized URL if valid, null otherwise
+ */
+export const validateExternalUrl = (
+	url: string,
+	allowedDomains?: string[]
+): string | null => {
+	try {
+		const parsed = new URL(url);
+
+		// Only allow http and https protocols
+		if (!['http:', 'https:'].includes(parsed.protocol)) {
+			return null;
+		}
+
+		// Default allowed domains for social/external links
+		const defaultAllowedDomains = [
+			'instagram.com',
+			'www.instagram.com',
+			'twitter.com',
+			'x.com',
+			'github.com',
+			'linkedin.com',
+			'www.linkedin.com',
+			'youtube.com',
+			'www.youtube.com',
+		];
+
+		const domains = allowedDomains ?? defaultAllowedDomains;
+
+		// Check if the hostname is in the allowed list
+		const isAllowed = domains.some(
+			(domain) => parsed.hostname === domain || parsed.hostname.endsWith(`.${domain}`)
+		);
+
+		if (!isAllowed) {
+			return null;
+		}
+
+		// Return the URL with protocol and hostname (removes any username/password)
+		return `${parsed.protocol}//${parsed.hostname}${parsed.pathname}${parsed.search}${parsed.hash}`;
+	} catch {
+		return null;
+	}
+};
+
+/**
+ * Creates a safe external link object with all security attributes
+ * @param url - The external URL
+ * @param allowedDomains - Optional array of allowed domains
+ * @returns Object with safe URL and link attributes, or null if invalid
+ */
+export const createSafeExternalLink = (
+	url: string,
+	allowedDomains?: string[]
+): { href: string; target: string; rel: string } | null => {
+	const validatedUrl = validateExternalUrl(url, allowedDomains);
+	if (!validatedUrl) return null;
+
+	return {
+		href: validatedUrl,
+		rel: 'noopener noreferrer',
+		target: '_blank',
+	};
+};

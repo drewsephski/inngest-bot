@@ -11,9 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserControl } from '@/components/user-control';
 import { LINKS } from '@/config';
+import { SafeExternalLink } from '@/components/safe-external-link';
+import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useScroll } from '@/hooks/use-scroll';
-import { cn } from '@/lib/utils';
 
 export const Navbar = () => {
 	const isScrolled = useScroll();
@@ -86,11 +87,10 @@ export const Navbar = () => {
 
 					<ThemeToggle />
 
-					<Link
+					<SafeExternalLink
 						href={LINKS.INSTAGRAM}
-						target='_blank'
-						rel='noopener noreferrer'
 						className='hover:bg-muted/50 group relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg opacity-70 transition-all duration-300 hover:opacity-100'
+						title='Instagram'
 					>
 						<img
 							src='https://svgl.app/library/instagram-icon.svg'
@@ -99,8 +99,7 @@ export const Navbar = () => {
 							width={20}
 							className='transition-transform duration-300 group-hover:scale-110'
 						/>
-						<span className='sr-only'>Instagram</span>
-					</Link>
+					</SafeExternalLink>
 				</div>
 			</div>
 		</nav>

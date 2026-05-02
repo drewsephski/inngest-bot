@@ -33,7 +33,13 @@ export const messagesRouter = createTRPCRouter({
 				},
 			});
 
-			if (existingProjectCount === 0) throw new TRPCError({ code: 'NOT_FOUND', message: 'Project not found' });
+			// Use consistent error message to prevent project ID enumeration attacks
+			if (existingProjectCount === 0) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'Project not found or access denied',
+				});
+			}
 
 			const settings = await db.userSettings.findUnique({
 				where: {

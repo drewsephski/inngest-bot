@@ -111,7 +111,8 @@ export const ProjectForm = () => {
 	const createProject = useMutation(
 		trpc.projects.create.mutationOptions({
 			onError: (error) => {
-				if (error.data?.code === 'UNAUTHORIZED') {
+				// Handle UNAUTHORIZED or network errors (like "Failed to fetch") by showing sign-up
+				if (error.data?.code === 'UNAUTHORIZED' || error.message?.includes('Failed to fetch')) {
 					return openSignUp({
 						appearance: {
 							captcha: {
@@ -134,12 +135,17 @@ export const ProjectForm = () => {
 
 				toast.error(error.message || 'Failed to create project');
 			},
-			onSuccess: ({ id }) => {
-				queryClient.invalidateQueries(trpc.projects.getMany.queryOptions());
-				queryClient.invalidateQueries(trpc.usage.status.queryOptions());
+			onSuccess: async ({ id }) => {
+				// Fix race condition: Wait for query invalidation before navigation
+				// This ensures the projects list is fresh when the user navigates back
+				await Promise.all([
+					queryClient.invalidateQueries(trpc.projects.getMany.queryOptions()),
+					queryClient.invalidateQueries(trpc.usage.status.queryOptions()),
+				]);
 
 				localStorage.removeItem(STORAGE_KEY);
 
+				// Navigate only after cache is invalidated
 				router.push(`/projects/${id}`);
 			},
 		})

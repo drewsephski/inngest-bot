@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { ArrowLeft, FileQuestion, Home } from 'lucide-react';
+import { ArrowLeft, FileQuestion } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
@@ -18,15 +18,8 @@ const NotFoundPage = () => {
 				<div className='flex items-center justify-center space-x-4'>
 					<Button variant='outline' asChild>
 						<Link href='/'>
-							<ArrowLeft className='size-4' />
-							Go Back Home
-						</Link>
-					</Button>
-
-					<Button asChild>
-						<Link href='/'>
-							<Home className='size-4' />
-							Return to Home
+							<ArrowLeft className='mr-2 size-4' />
+							Back to Home
 						</Link>
 					</Button>
 				</div>
