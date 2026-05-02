@@ -99,6 +99,7 @@ lovable-clone/
     |-- lib/
       |--- db.ts
       |--- encryption.ts
+      |--- openrouter.ts
       |--- utils.ts
     |-- modules/
       |--- auth/
@@ -328,6 +329,7 @@ Useful resources and dependencies that are used in Vibe.
 - [eslint-plugin-react-hooks](https://www.npmjs.com/package/eslint-plugin-react-hooks): ^7.0.1
 - [eslint-plugin-tailwindcss](https://www.npmjs.com/package/eslint-plugin-tailwindcss): 4.0.0-beta.0
 - [inngest](https://www.npmjs.com/package/inngest): ^4.2.4
+- [inngest-cli](https://www.npmjs.com/package/inngest-cli): ^1.19.1
 - [lucide-react](https://www.npmjs.com/package/lucide-react): ^1.14.0
 - [mprocs](https://www.npmjs.com/package/mprocs): ^0.9.1
 - [next](https://www.npmjs.com/package/next): 16.2.4
@@ -338,6 +340,7 @@ Useful resources and dependencies that are used in Vibe.
 - [prettier-plugin-tailwindcss](https://www.npmjs.com/package/prettier-plugin-tailwindcss): ^0.7.2
 - [prisma](https://www.npmjs.com/package/prisma): ^7.5.0
 - [prismjs](https://www.npmjs.com/package/prismjs): ^1.30.0
+- [radix-ui](https://www.npmjs.com/package/radix-ui): ^1.4.3
 - [random-word-slugs](https://www.npmjs.com/package/random-word-slugs): ^0.1.7
 - [rate-limiter-flexible](https://www.npmjs.com/package/rate-limiter-flexible): ^11.0.1
 - [react](https://www.npmjs.com/package/react): 19.2.5
