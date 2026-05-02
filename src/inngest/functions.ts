@@ -21,7 +21,7 @@ import { decrypt } from '@/lib/encryption';
 import { generateTextFromMessage } from '@/lib/utils';
 
 import { inngest } from './client';
-import { getLastAssistantTextMessageContent, getSandbox } from './utils';
+import { ensureDevServerRunning, getLastAssistantTextMessageContent, getSandbox } from './utils';
 
 interface AgentState {
 	summary: string;
@@ -270,6 +270,9 @@ export const codeAgentFunction = inngest.createFunction(
 
 		const sandboxUrl = await step.run('get-sandbox-url', async () => {
 			const sandbox = await getSandbox(sandboxId);
+
+			// Ensure dev server is running before getting host
+			await ensureDevServerRunning(sandbox);
 
 			const host = sandbox.getHost(3000);
 
