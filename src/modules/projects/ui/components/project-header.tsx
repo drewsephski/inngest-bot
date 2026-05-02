@@ -70,11 +70,11 @@ export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
 
 	return (
 		<header className='bg-sidebar/50 group flex items-center justify-between border-b px-3 py-2.5 transition-colors'>
-			<div className='flex items-center gap-1'>
-				<Button variant='ghost' size='icon-sm' className='shrink-0 p-0' asChild>
-					<Link href='/' className='flex items-center justify-center'>
-						<ChevronLeftIcon className='size-5' strokeWidth={2.5} />
-						<span className='sr-only'>Back to Dashboard</span>
+			<div className='flex items-center gap-2'>
+				<Button variant='ghost' size='sm' className='shrink-0 gap-1 px-2' asChild>
+					<Link href='/' className='flex items-center'>
+						<ChevronLeftIcon className='size-4' strokeWidth={2.5} />
+						<span className='hidden text-sm font-medium sm:inline'>Dashboard</span>
 					</Link>
 				</Button>
 

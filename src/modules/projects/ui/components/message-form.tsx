@@ -1,33 +1,36 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useClerk } from '@clerk/nextjs';
+import { dark } from '@clerk/themes';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowUpIcon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import TextareaAutosize from 'react-textarea-autosize';
 import { z } from 'zod';
 
-import { CreateMessageSchema } from "@/modules/messages/schemas/create-message-schema";
-import { usePricingModal } from "@/modules/pricing/hooks/use-pricing-modal";
-import { useSettingsModal } from "@/modules/settings/hooks/use-settings-modal";
+import { CreateMessageSchema } from '@/modules/messages/schemas/create-message-schema';
+import { useSettingsModal } from '@/modules/settings/hooks/use-settings-modal';
 
-import { Button } from "@/components/ui/button";
-import { Form, FormField } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
-import { useTRPC } from "@/trpc/client";
+import { Button } from '@/components/ui/button';
+import { Form, FormField } from '@/components/ui/form';
+import { cn } from '@/lib/utils';
+import { useTRPC } from '@/trpc/client';
 
-import { Usage } from "./usage";
+import { Usage } from './usage';
 
 interface MessageFormProps {
 	projectId: string;
 }
 
 export const MessageForm = ({ projectId }: MessageFormProps) => {
+	const { openSignUp } = useClerk();
+	const { resolvedTheme } = useTheme();
 	const { onOpen: openSettingsModal } = useSettingsModal();
-	const { open: openPricingModal } = usePricingModal();
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
 	const [isFocused, setIsFocused] = useState(false);
@@ -44,12 +47,29 @@ export const MessageForm = ({ projectId }: MessageFormProps) => {
 	const createMessage = useMutation(
 		trpc.messages.create.mutationOptions({
 			onError: (error) => {
+				if (error.data?.code === 'UNAUTHORIZED') {
+					return openSignUp({
+						appearance: {
+							captcha: {
+								theme: resolvedTheme === 'dark' ? 'dark' : 'light',
+							},
+							elements: {
+								cardBox: 'border! shadow-none! rounded-lg!',
+							},
+							theme: resolvedTheme === 'dark' ? dark : undefined,
+						},
+					});
+				}
+
 				if (error.data?.code === 'PRECONDITION_FAILED') {
 					toast.error(error.message || 'Failed to verify API key');
 					return openSettingsModal();
 				}
 
-				if (error.data?.code === 'TOO_MANY_REQUESTS') return openPricingModal();
+				if (error.data?.code === 'TOO_MANY_REQUESTS') {
+					toast.error("You've run out of credits. Upgrade to continue or add your own API key.");
+					return openSettingsModal();
+				}
 
 				toast.error(error.message || 'Failed to create message');
 			},

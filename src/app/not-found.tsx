@@ -1,15 +1,10 @@
-'use client';
-
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
 import { ArrowLeft, FileQuestion, Home } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
 const NotFoundPage = () => {
-	const router = useRouter();
-
 	return (
 		<div className='bg-background flex min-h-screen flex-col items-center justify-center p-4'>
 			<div className='max-w-xl space-y-6 text-center'>
@@ -21,9 +16,11 @@ const NotFoundPage = () => {
 				</p>
 
 				<div className='flex items-center justify-center space-x-4'>
-					<Button variant='outline' onClick={() => router.back()}>
-						<ArrowLeft className='size-4' />
-						Go Back
+					<Button variant='outline' asChild>
+						<Link href='/'>
+							<ArrowLeft className='size-4' />
+							Go Back Home
+						</Link>
 					</Button>
 
 					<Button asChild>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { ArrowRight, Sparkles as SparklesIcon, Zap } from 'lucide-react';
+import { ArrowRight, ExternalLink, Sparkles as SparklesIcon, Zap } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { ProjectForm } from '@/modules/home/ui/components/project-form';
@@ -179,22 +179,16 @@ const HomePage = () => {
 						</div>
 
 						<div className='flex items-center gap-1'>
-							{[
-								{ href: 'https://github.com/drewsephski', label: 'GitHub' },
-								{ href: '#', label: 'Documentation' },
-								{ href: '#', label: 'Privacy' },
-								{ href: '#', label: 'Terms' },
-							].map((link) => (
-								<a
-									key={link.label}
-									href={link.href}
-									target={link.href.startsWith('http') ? '_blank' : undefined}
-									rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-									className='text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg px-3 py-1.5 text-sm transition-all duration-200'
-								>
-									{link.label}
-								</a>
-							))}
+							<a
+								href='https://github.com/drewsephski'
+								target='_blank'
+								rel='noopener noreferrer'
+								title='Opens in new tab'
+								className='text-muted-foreground hover:text-foreground hover:bg-muted/50 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm transition-all duration-200'
+							>
+								GitHub
+								<ExternalLink className='h-3 w-3 opacity-60' />
+							</a>
 						</div>
 					</div>
 
