@@ -46,7 +46,6 @@
 Here is the folder structure of this app.
 
 <!--- FOLDER_STRUCTURE_START --->
-
 ```bash
 lovable-clone/
   |- prisma/
@@ -73,11 +72,13 @@ lovable-clone/
       |--- code-view/
       |--- providers/
       |--- ui/
+      |--- ai-settings-form.tsx
       |--- error-state.tsx
       |--- file-explorer.tsx
       |--- hint.tsx
       |--- loading-state.tsx
       |--- responsive-dialog.tsx
+      |--- settings-modal.tsx
       |--- theme-toggle.tsx
       |--- tree-view.tsx
       |--- user-control.tsx
@@ -98,9 +99,12 @@ lovable-clone/
       |--- functions.ts
       |--- utils.ts
     |-- lib/
+      |--- audit.ts
+      |--- cache.ts
       |--- db.ts
       |--- encryption.ts
       |--- openrouter.ts
+      |--- retry.ts
       |--- utils.ts
     |-- modules/
       |--- auth/
@@ -134,7 +138,6 @@ lovable-clone/
   |- tsconfig.json
   |- vercel.ts
 ```
-
 <!--- FOLDER_STRUCTURE_END --->
 
 <br />
@@ -311,6 +314,8 @@ Useful resources and dependencies that are used in Nova.
 - [@trpc/client](https://www.npmjs.com/package/@trpc/client): ^11.9.0
 - [@trpc/server](https://www.npmjs.com/package/@trpc/server): ^11.9.0
 - [@trpc/tanstack-react-query](https://www.npmjs.com/package/@trpc/tanstack-react-query): ^11.9.0
+- [@tsparticles/react](https://www.npmjs.com/package/@tsparticles/react): 3.0.0
+- [@tsparticles/slim](https://www.npmjs.com/package/@tsparticles/slim): 3.9.1
 - [@types/node](https://www.npmjs.com/package/@types/node): ^25.5.0
 - [@types/pg](https://www.npmjs.com/package/@types/pg): ^8.20.0
 - [@types/prismjs](https://www.npmjs.com/package/@types/prismjs): ^1.26.6
@@ -330,6 +335,7 @@ Useful resources and dependencies that are used in Nova.
 - [eslint-plugin-prettier](https://www.npmjs.com/package/eslint-plugin-prettier): ^5.5.5
 - [eslint-plugin-react-hooks](https://www.npmjs.com/package/eslint-plugin-react-hooks): ^7.0.1
 - [eslint-plugin-tailwindcss](https://www.npmjs.com/package/eslint-plugin-tailwindcss): 4.0.0-beta.0
+- [framer-motion](https://www.npmjs.com/package/framer-motion): ^12.38.0
 - [inngest](https://www.npmjs.com/package/inngest): ^4.2.4
 - [inngest-cli](https://www.npmjs.com/package/inngest-cli): ^1.19.1
 - [lucide-react](https://www.npmjs.com/package/lucide-react): ^1.14.0
@@ -354,6 +360,7 @@ Useful resources and dependencies that are used in Nova.
 - [react-textarea-autosize](https://www.npmjs.com/package/react-textarea-autosize): ^8.5.9
 - [server-only](https://www.npmjs.com/package/server-only): ^0.0.1
 - [superjson](https://www.npmjs.com/package/superjson): ^2.2.6
+- [svix](https://www.npmjs.com/package/svix): ^1.92.2
 - [tailwind-merge](https://www.npmjs.com/package/tailwind-merge): ^3.5.0
 - [tailwind-scrollbar](https://www.npmjs.com/package/tailwind-scrollbar): ^4.0.2
 - [tailwindcss](https://www.npmjs.com/package/tailwindcss): ^4.2.2
