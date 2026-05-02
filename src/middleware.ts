@@ -138,5 +138,7 @@ export const config = {
 		 * - public folder files (robots.txt, sitemap.xml, etc.)
 		 */
 		'/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|json)$).*)',
+		// Always run for API routes and the proxy path
+		'/(api|trpc|__clerk)(.*)',
 	],
 };
