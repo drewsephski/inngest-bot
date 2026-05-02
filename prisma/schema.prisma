@@ -82,9 +82,10 @@ enum AIProvider {
 }
 
 model UserSettings {
-  userId   String     @id
-  apiKey   String
-  provider AIProvider @default(OPENAI)
+  userId    String     @id
+  apiKey    String?
+  provider  AIProvider @default(OPENROUTER)
+  useAppKey Boolean    @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -17,11 +17,12 @@ export const settingsRouter = createTRPCRouter({
 			},
 		});
 
-		if (!settings) return { apiKey: '', provider: 'OPENAI' };
+		if (!settings) return { apiKey: '', provider: 'OPENROUTER', useAppKey: false };
 
 		return {
-			apiKey: decrypt(settings.apiKey),
+			apiKey: settings.apiKey ? decrypt(settings.apiKey) : '',
 			provider: settings.provider,
+			useAppKey: settings.useAppKey,
 		};
 	}),
 	removeAISettings: protectedProcedure.mutation(async ({ ctx }) => {
@@ -39,23 +40,29 @@ export const settingsRouter = createTRPCRouter({
 	}),
 	saveAISettings: protectedProcedure.input(AISettingsSchema).mutation(async ({ ctx, input }) => {
 		const { userId } = ctx.auth;
-		const { apiKey, provider } = input;
+		const { apiKey, provider, useAppKey } = input;
 
-		const { error, success } = await verifyAISettings(apiKey, provider);
+		// Only verify API key if not using app key
+		if (!useAppKey && apiKey) {
+			const { error, success } = await verifyAISettings(apiKey, provider);
 
-		if (!success) throw new TRPCError({ code: 'BAD_REQUEST', message: error || 'Failed to verify API key' });
+			if (!success) throw new TRPCError({ code: 'BAD_REQUEST', message: error || 'Failed to verify API key' });
+		}
 
-		const encryptedApiKey = encrypt(apiKey);
+		// Encrypt API key only if provided and not using app key
+		const encryptedApiKey = useAppKey || !apiKey ? null : encrypt(apiKey);
 
 		const settings = await db.userSettings.upsert({
 			create: {
 				apiKey: encryptedApiKey,
 				provider,
+				useAppKey,
 				userId,
 			},
 			update: {
 				apiKey: encryptedApiKey,
 				provider,
+				useAppKey,
 			},
 			where: {
 				userId,

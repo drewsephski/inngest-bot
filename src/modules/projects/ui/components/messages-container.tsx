@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import { useSuspenseQuery } from '@tanstack/react-query';
 
@@ -20,7 +20,7 @@ export const MessagesContainer = ({ activeFragment, projectId, setActiveFragment
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const lastAssistantMessageIdRef = useRef<string | null>(null);
 
-	const { data: messages } = useSuspenseQuery(
+	const { data } = useSuspenseQuery(
 		trpc.messages.getMany.queryOptions(
 			{ projectId },
 			{
@@ -28,6 +28,8 @@ export const MessagesContainer = ({ activeFragment, projectId, setActiveFragment
 			}
 		)
 	);
+
+	const messages = useMemo(() => data?.items ?? [], [data?.items]);
 
 	const lastMessage = messages[messages.length - 1];
 	const isLastMessageUser = lastMessage?.role === MessageRole.USER;
@@ -57,7 +59,7 @@ export const MessagesContainer = ({ activeFragment, projectId, setActiveFragment
 							content={message.content}
 							role={message.role}
 							type={message.type}
-							fragment={message.fragment}
+							fragment={message.fragment ?? null}
 							createdAt={message.createdAt}
 							isActiveFragment={activeFragment?.id === message.fragment?.id}
 							onFragmentClick={() => setActiveFragment(message.fragment)}

@@ -5,6 +5,7 @@ import { CreateMessageSchema } from '@/modules/messages/schemas/create-message-s
 import { verifyAISettings } from '@/modules/settings/actions';
 import { consumeCredits } from '@/modules/usage/lib/usage';
 
+import { env } from '@/env/server';
 import { MessageRole, MessageType } from '@/generated/prisma/client';
 import { inngest } from '@/inngest/client';
 import { db } from '@/lib/db';
@@ -40,15 +41,28 @@ export const messagesRouter = createTRPCRouter({
 				},
 			});
 
-			if (!settings) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'API key not found' });
+			const { has } = ctx.auth;
+			const hasProAccess = has({ plan: 'pro' });
+			const useAppKey = settings?.useAppKey ?? false;
 
-			const apiKey = decrypt(settings.apiKey);
+			// Pro users with useAppKey can proceed without stored API key
+			// Free users or pro users without useAppKey need a stored API key
+			if (!hasProAccess || !useAppKey) {
+				if (!settings) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'API key not found' });
 
-			if (!apiKey) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'API key not found' });
+				const apiKey = settings.apiKey ? decrypt(settings.apiKey) : null;
 
-			const { error, success } = await verifyAISettings(apiKey, settings.provider);
+				if (!apiKey) throw new TRPCError({ code: 'PRECONDITION_FAILED', message: 'API key not found' });
 
-			if (!success) throw new TRPCError({ code: 'BAD_REQUEST', message: error || 'Failed to verify API key' });
+				const { error, success } = await verifyAISettings(apiKey, settings.provider);
+
+				if (!success) throw new TRPCError({ code: 'BAD_REQUEST', message: error || 'Failed to verify API key' });
+			}
+
+			// For pro users with useAppKey, verify the app API key is configured
+			if (hasProAccess && useAppKey && !env.OPENROUTER_API_KEY) {
+				throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'App API key not configured' });
+			}
 
 			try {
 				await consumeCredits();
@@ -95,15 +109,7 @@ export const messagesRouter = createTRPCRouter({
 			const messages = await db.message.findMany({
 				cursor: cursor ? { id: cursor } : undefined,
 				include: {
-					fragment: {
-						select: {
-							createdAt: true,
-							files: true,
-							id: true,
-							sandboxUrl: true,
-							title: true,
-						},
-					},
+					fragment: true,
 				},
 				orderBy: {
 					createdAt: 'asc',

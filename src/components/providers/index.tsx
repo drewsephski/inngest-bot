@@ -3,6 +3,8 @@ import type { PropsWithChildren } from 'react';
 import { ClerkProvider, GoogleOneTap } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
 
+import { SubscriptionSuccessToast } from '@/modules/pricing/ui/components/subscription-success-toast';
+
 import { TRPCReactProvider } from '@/trpc/client';
 
 import { ModalProvider } from './modal-provider';
@@ -30,6 +32,7 @@ export const Providers = ({ children }: Readonly<PropsWithChildren>) => {
 
 					<ModalProvider />
 					<ToasterProvider />
+					<SubscriptionSuccessToast />
 					<GoogleOneTap />
 				</ThemeProvider>
 			</TRPCReactProvider>

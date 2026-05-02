@@ -22,48 +22,67 @@ export const Navbar = () => {
 	return (
 		<nav
 			className={cn(
-				'fixed inset-x-0 top-0 z-50 border-b p-4 transition-all duration-300',
-				isScrolled ? 'bg-background/80 border-border backdrop-blur-md' : 'border-transparent bg-transparent'
+				'fixed inset-x-0 top-0 z-50 border-b transition-all duration-500 ease-out',
+				isScrolled
+					? 'border-border/50 bg-background/80 py-3 shadow-[0_1px_3px_rgba(0,0,0,0.02)] backdrop-blur-xl'
+					: 'border-transparent bg-transparent py-4'
 			)}
 		>
-			<div className='mx-auto flex w-full max-w-5xl items-center justify-between'>
-				<Link href='/' className='flex items-center gap-2'>
-					<img src='/logo.svg' alt='Nova logo' width={24} height={24} />
-					<span className='text-lg font-semibold'>Nova</span>
+			<div className='mx-auto flex w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8'>
+				<Link href='/' className='group flex items-center gap-3'>
+					<div className='from-primary/15 to-primary/5 relative flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br transition-all duration-300 group-hover:shadow-[0_0_20px_rgba(var(--primary),0.25)]'>
+						<div className='from-primary/5 absolute inset-0 bg-gradient-to-br to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
+						<img src='/logo.svg' alt='Nova logo' width={18} height={18} className='relative z-10' />
+					</div>
+					<span className='text-lg font-semibold tracking-tight'>Nova</span>
 				</Link>
 
-				<div className='flex items-center gap-2'>
+				<div className='flex items-center gap-3'>
 					<ClerkLoading>
-						<Skeleton className='h-8 w-16' />
-						<Skeleton className='h-8 w-16' />
+						<div className='flex items-center gap-2'>
+							<Skeleton className='h-9 w-[72px] rounded-lg' />
+							<Skeleton className='h-9 w-[72px] rounded-lg' />
+						</div>
 					</ClerkLoading>
 
 					<ClerkLoaded>
 						<Show when='signed-out'>
-							<div className='flex gap-2'>
-								<div className='hidden sm:inline-block'>
+							<div className='flex items-center gap-2'>
+								<div className='hidden sm:block'>
 									<SignUpButton>
-										<Button variant='outline' size='sm'>
+										<Button
+											variant='outline'
+											size='sm'
+											className='border-border/60 bg-background/50 hover:border-primary/40 hover:bg-accent/60 rounded-lg px-4 transition-all duration-300'
+										>
 											Sign up
 										</Button>
 									</SignUpButton>
 								</div>
 
 								<SignInButton>
-									<Button size='sm'>Sign in</Button>
+									<Button
+										size='sm'
+										className='hover:shadow-primary/10 rounded-lg px-4 shadow-sm transition-all duration-300 hover:shadow-md'
+									>
+										Sign in
+									</Button>
 								</SignInButton>
 							</div>
 						</Show>
 
 						<Show when='signed-in'>
-							<div className='flex items-center gap-3'>
+							<div className='flex items-center gap-4'>
 								<div className='hidden sm:flex'>
 									<CreditsBadge />
 								</div>
+								<div className='bg-border/60 hidden h-4 w-px sm:block' />
 								<UserControl showName={!isMobile} />
 							</div>
 						</Show>
 					</ClerkLoaded>
+
+					<div className='bg-border/60 hidden h-4 w-px sm:block' />
 
 					<ThemeToggle />
 
@@ -71,9 +90,15 @@ export const Navbar = () => {
 						href={LINKS.INSTAGRAM}
 						target='_blank'
 						rel='noopener noreferrer'
-						className='opacity-75 hover:opacity-100'
+						className='hover:bg-muted/50 group relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg opacity-70 transition-all duration-300 hover:opacity-100'
 					>
-						<img src='https://svgl.app/library/instagram-icon.svg' alt='Instagram' height={28} width={28} />
+						<img
+							src='https://svgl.app/library/instagram-icon.svg'
+							alt='Instagram'
+							height={20}
+							width={20}
+							className='transition-transform duration-300 group-hover:scale-110'
+						/>
 						<span className='sr-only'>Instagram</span>
 					</Link>
 				</div>

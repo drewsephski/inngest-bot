@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import TextareaAutosize from 'react-textarea-autosize';
 import { z } from 'zod';
 
-import { CreateMessageSchema } from '@/modules/messages/schemas/create-message-schema';
-import { useSettingsModal } from '@/modules/settings/hooks/use-settings-modal';
+import { CreateMessageSchema } from "@/modules/messages/schemas/create-message-schema";
+import { usePricingModal } from "@/modules/pricing/hooks/use-pricing-modal";
+import { useSettingsModal } from "@/modules/settings/hooks/use-settings-modal";
 
-import { Button } from '@/components/ui/button';
-import { Form, FormField } from '@/components/ui/form';
-import { cn } from '@/lib/utils';
-import { useTRPC } from '@/trpc/client';
+import { Button } from "@/components/ui/button";
+import { Form, FormField } from "@/components/ui/form";
+import { cn } from "@/lib/utils";
+import { useTRPC } from "@/trpc/client";
 
-import { Usage } from './usage';
+import { Usage } from "./usage";
 
 interface MessageFormProps {
 	projectId: string;
@@ -27,8 +27,8 @@ interface MessageFormProps {
 
 export const MessageForm = ({ projectId }: MessageFormProps) => {
 	const { onOpen: openSettingsModal } = useSettingsModal();
+	const { open: openPricingModal } = usePricingModal();
 	const trpc = useTRPC();
-	const router = useRouter();
 	const queryClient = useQueryClient();
 	const [isFocused, setIsFocused] = useState(false);
 
@@ -49,7 +49,7 @@ export const MessageForm = ({ projectId }: MessageFormProps) => {
 					return openSettingsModal();
 				}
 
-				if (error.data?.code === 'TOO_MANY_REQUESTS') return router.push('/pricing');
+				if (error.data?.code === 'TOO_MANY_REQUESTS') return openPricingModal();
 
 				toast.error(error.message || 'Failed to create message');
 			},

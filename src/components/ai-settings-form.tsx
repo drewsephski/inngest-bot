@@ -5,9 +5,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+import { useUser } from '@clerk/nextjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { EyeIcon, EyeOffIcon, Loader2Icon, Trash2Icon } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, Loader2Icon, SparklesIcon, Trash2Icon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
@@ -18,13 +19,18 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { useConfirm } from '@/hooks/use-confirm';
 import { useTRPC } from '@/trpc/client';
 
 export const AISettingsForm = () => {
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
+	const { user } = useUser();
 	const [apiKeyVisible, setApiKeyVisible] = useState(false);
+
+	// Check if user has pro access
+	const hasProAccess = user?.publicMetadata?.plan === 'pro';
 
 	const [ConfirmDialog, confirm] = useConfirm({
 		message: 'Are you sure you want to remove the API Key? This action cannot be undone.',
@@ -38,7 +44,8 @@ export const AISettingsForm = () => {
 	const form = useForm<AISettingsFormValues>({
 		defaultValues: {
 			apiKey: aiSettings?.apiKey || '',
-			provider: (aiSettings?.provider as AISettingsFormValues['provider']) || 'OPENAI',
+			provider: (aiSettings?.provider as AISettingsFormValues['provider']) || 'OPENROUTER',
+			useAppKey: aiSettings?.useAppKey ?? false,
 		},
 		resolver: zodResolver(AISettingsSchema),
 	});
@@ -87,10 +94,13 @@ export const AISettingsForm = () => {
 
 	const isPending = saveAISettings.isPending || removeAISettings.isPending;
 
+	const useAppKey = form.watch('useAppKey');
+
 	useEffect(() => {
 		if (aiSettings) {
 			form.setValue('apiKey', aiSettings.apiKey);
 			form.setValue('provider', aiSettings.provider as AISettingsFormValues['provider']);
+			form.setValue('useAppKey', aiSettings.useAppKey ?? false);
 		}
 	}, [aiSettings, form]);
 
@@ -154,6 +164,29 @@ export const AISettingsForm = () => {
 						)}
 					/>
 
+					{hasProAccess && (
+						<FormField
+							control={form.control}
+							name='useAppKey'
+							render={({ field }) => (
+								<FormItem className='flex flex-row items-center justify-between rounded-lg border p-4'>
+									<div className='space-y-0.5'>
+										<FormLabel className='flex items-center gap-2 text-base'>
+											<SparklesIcon className='text-primary size-4' />
+											Use Inngest Bot API Key
+										</FormLabel>
+										<FormDescription>
+											Use our API key instead of your own. Powered by DeepSeek V4 Flash.
+										</FormDescription>
+									</div>
+									<FormControl>
+										<Switch checked={field.value} onCheckedChange={field.onChange} disabled={isPending} />
+									</FormControl>
+								</FormItem>
+							)}
+						/>
+					)}
+
 					<FormField
 						disabled={isPending}
 						control={form.control}
@@ -166,6 +199,7 @@ export const AISettingsForm = () => {
 										<Input
 											type={apiKeyVisible ? 'text' : 'password'}
 											placeholder={providerConfig.placeholder}
+											disabled={useAppKey}
 											{...field}
 										/>
 									</FormControl>
@@ -184,16 +218,24 @@ export const AISettingsForm = () => {
 								</div>
 
 								<FormDescription>
-									Get your API Key from{' '}
-									<Link
-										href={providerConfig.docsUrl}
-										target='_blank'
-										rel='noopener noreferrer'
-										className='text-primary font-medium underline underline-offset-2 opacity-100 hover:opacity-75'
-									>
-										{providerConfig.docsLabel}
-									</Link>
-									. The key is automatically deleted after 30 days.
+									{useAppKey ? (
+										<span className='text-muted-foreground'>
+											Using Inngest Bot&apos;s API key. No personal API key required.
+										</span>
+									) : (
+										<>
+											Get your API Key from{' '}
+											<Link
+												href={providerConfig.docsUrl}
+												target='_blank'
+												rel='noopener noreferrer'
+												className='text-primary font-medium underline underline-offset-2 opacity-100 hover:opacity-75'
+											>
+												{providerConfig.docsLabel}
+											</Link>
+											. The key is automatically deleted after 30 days.
+										</>
+									)}
 								</FormDescription>
 
 								<FormMessage />
@@ -202,7 +244,7 @@ export const AISettingsForm = () => {
 					/>
 
 					<div className='flex justify-end gap-2'>
-						{!!aiSettings?.apiKey.trim() && (
+						{(!!aiSettings?.apiKey.trim() || useAppKey) && (
 							<Button
 								variant='destructive'
 								type='button'

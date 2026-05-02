@@ -123,7 +123,7 @@ export const verifyOpenRouterApiKey = async (apiKey: string): Promise<{ success:
 		// SDK requires chatRequest wrapper for the parameters
 		await client.chat.send({
 			chatRequest: {
-				model: 'openai/gpt-4o-mini', // Use a cheap, fast model for verification
+				model: 'openrouter/free', // Use a cheap, fast model for verification
 				messages: [{ role: 'user', content: 'Hi' }],
 				maxTokens: 5,
 			},
@@ -137,19 +137,14 @@ export const verifyOpenRouterApiKey = async (apiKey: string): Promise<{ success:
 };
 
 /**
+ * Model used for pro users when using the app's API key
+ */
+export const PRO_MODEL = 'deepseek/deepseek-v4-flash';
+
+/**
  * Common OpenRouter model IDs for reference
  */
 export const OPENROUTER_MODELS = {
-	GPT_4O: 'openai/gpt-4o',
-	GPT_4O_MINI: 'openai/gpt-4o-mini',
-	GPT_4_1: 'openai/gpt-4.1',
-	CLAUDE_3_5_SONNET: 'anthropic/claude-3.5-sonnet',
-	CLAUDE_3_7_SONNET: 'anthropic/claude-3.7-sonnet',
-	DEEPSEEK_CHAT: 'deepseek/deepseek-chat',
-	DEEPSEEK_R1: 'deepseek/deepseek-r1',
-	LLAMA_3_3_70B: 'meta-llama/llama-3.3-70b-instruct',
-	GEMINI_FLASH: 'google/gemini-2.0-flash-001',
-	/** Routes to any available free model. Good for testing/low-cost usage. */
 	FREE: 'openrouter/free',
 } as const;
 

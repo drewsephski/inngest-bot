@@ -19,6 +19,7 @@ import { MessageRole, MessageType } from '@/generated/prisma/client';
 import { trackUsageAnalytics } from '@/lib/audit';
 import { db } from '@/lib/db';
 import { decrypt } from '@/lib/encryption';
+import { PRO_MODEL } from '@/lib/openrouter';
 import { generateTextFromMessage } from '@/lib/utils';
 
 import { inngest } from './client';
@@ -34,9 +35,7 @@ export const codeAgentFunction = inngest.createFunction(
 	async ({ event, step }) => {
 		const projectId = event.data.projectId as string;
 
-		let userId: string;
-
-		const { apiKey, provider } = await step.run('get-api-key', async () => {
+		const { apiKey, provider, useAppKey, userId } = await step.run('get-api-key', async () => {
 			const project = await db.project.findUnique({
 				select: {
 					userId: true,
@@ -48,7 +47,7 @@ export const codeAgentFunction = inngest.createFunction(
 
 			if (!project) throw new NonRetriableError('Project not found');
 
-			userId = project.userId;
+			const userId = project.userId;
 
 			const settings = await db.userSettings.findUnique({
 				where: {
@@ -56,11 +55,34 @@ export const codeAgentFunction = inngest.createFunction(
 				},
 			});
 
-			if (!settings) throw new NonRetriableError('AI settings not found');
+			// If no settings exist, pro users can still use app key if configured
+			// Free users need settings with API key
+			const hasAppKey = !!env.OPENROUTER_API_KEY;
+			const userUseAppKey = settings?.useAppKey ?? false;
+
+			if (!settings && !hasAppKey) {
+				throw new NonRetriableError('AI settings not found');
+			}
+
+			// Determine which API key to use
+			const finalApiKey =
+				(userUseAppKey && hasAppKey) || settings?.apiKey
+					? userUseAppKey && hasAppKey
+						? env.OPENROUTER_API_KEY
+						: settings?.apiKey
+							? decrypt(settings.apiKey)
+							: null
+					: null;
+
+			if (!finalApiKey) {
+				throw new NonRetriableError('API key not found');
+			}
 
 			return {
-				apiKey: decrypt(settings.apiKey),
-				provider: settings.provider,
+				apiKey: finalApiKey,
+				provider: settings?.provider ?? 'OPENROUTER',
+				useAppKey: userUseAppKey && hasAppKey,
+				userId,
 			};
 		});
 
@@ -123,7 +145,7 @@ export const codeAgentFunction = inngest.createFunction(
 							apiKey,
 							baseUrl: 'https://openrouter.ai/api/v1',
 							defaultParameters: { temperature: 0.1 },
-							model: 'openrouter/free',
+							model: useAppKey ? PRO_MODEL : 'openrouter/free',
 						})
 					: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4.1' }),
 			name: 'code-agent',
@@ -246,7 +268,7 @@ export const codeAgentFunction = inngest.createFunction(
 							apiKey,
 							baseUrl: 'https://openrouter.ai/api/v1',
 							defaultParameters: { temperature: 0.1 },
-							model: 'openrouter/free',
+							model: useAppKey ? PRO_MODEL : 'openrouter/free',
 						})
 					: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4o-mini' }),
 			name: 'fragment-title-generator',
@@ -261,7 +283,7 @@ export const codeAgentFunction = inngest.createFunction(
 							apiKey,
 							baseUrl: 'https://openrouter.ai/api/v1',
 							defaultParameters: { temperature: 0.1 },
-							model: 'openrouter/free',
+							model: useAppKey ? PRO_MODEL : 'openrouter/free',
 						})
 					: openai({ apiKey, defaultParameters: { temperature: 0.1 }, model: 'gpt-4o-mini' }),
 			name: 'response-title-generator',
