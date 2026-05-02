@@ -115,8 +115,6 @@ lovable-clone/
     |-- types/
       |--- index.ts
     |-- proxy.ts
-  |- .env.example
-  |- .env/.env.local
   |- .gitignore
   |- .prettierignore
   |- .prettierrc.mjs
