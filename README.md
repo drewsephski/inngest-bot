@@ -124,7 +124,7 @@ lovable-clone/
       |--- server.tsx
     |-- types/
       |--- index.ts
-    |-- proxy.ts
+    |-- middleware.ts
   |- .gitignore
   |- .prettierignore
   |- .prettierrc.mjs
