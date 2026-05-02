@@ -2,6 +2,8 @@
 
 # AI-powered application builder built with Next.js 16
 
+> 🚀 **Inngest Bot Project** - Automated agent workflows with code execution capabilities
+
 ![AI-powered application builder built with Next.js 16](/.github/images/img_main.png 'AI-powered application builder built with Next.js 16')
 
 [![Ask Me Anything!](https://flat.badgen.net/static/Ask%20me/anything?icon=github&color=black&scale=1.01)](https://github.com/sanidhyy 'Ask Me Anything!')
