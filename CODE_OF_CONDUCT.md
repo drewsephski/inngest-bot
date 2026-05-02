@@ -1,4 +1,4 @@
-# Code of Conduct - Vibe
+# Code of Conduct - Nova
 
 ## Our Pledge
 

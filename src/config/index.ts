@@ -137,9 +137,9 @@ Only return the raw title.
 
 export const SITE_CONFIG: Metadata = {
 	appleWebApp: {
-		title: 'Vibe',
+		title: 'Nova',
 	},
-	applicationName: 'Vibe',
+	applicationName: 'Nova',
 	authors: {
 		name: 'Sanidhya Kumar Verma',
 		url: 'https://github.com/sanidhyy',
@@ -189,8 +189,8 @@ export const SITE_CONFIG: Metadata = {
 		'superjson',
 	] as Array<string>,
 	title: {
-		default: 'Vibe | Lovable Clone',
-		template: '%s | Vibe',
+		default: 'Nova | Lovable Clone',
+		template: '%s | Nova',
 	},
 } as const;
 

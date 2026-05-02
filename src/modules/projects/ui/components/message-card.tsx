@@ -55,9 +55,9 @@ const AssistantMessage = ({
 			className={cn('group flex flex-col px-2 pb-4', type === MessageType.ERROR && 'text-red-700 dark:text-red-500')}
 		>
 			<div className='mb-2 flex items-center gap-2 pl-2'>
-				<img src='/logo.svg' alt='Vibe logo' width={18} height={18} className='shrink-0' />
+				<img src='/logo.svg' alt='Nova logo' width={18} height={18} className='shrink-0' />
 
-				<span className='text-sm font-medium'>Vibe</span>
+				<span className='text-sm font-medium'>Nova</span>
 				<span className='text-muted-foreground text-xs opacity-0 transition-opacity group-hover:opacity-100'>
 					{formatDate(createdAt, "HH:mm 'on' MMM dd, yyyy")}
 				</span>

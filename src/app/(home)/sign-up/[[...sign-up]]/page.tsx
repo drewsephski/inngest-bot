@@ -4,7 +4,7 @@ import { SignUpView } from '@/modules/auth/ui/views/sign-up-view';
 
 export const metadata: Metadata = {
 	description:
-		'Create your Vibe account to manage projects, view personalized recommendations, and enjoy seamless collaboration. Sign up now to unlock the full suite of productivity features tailored for creative professionals.',
+		'Create your Nova account to manage projects, view personalized recommendations, and enjoy seamless collaboration. Sign up now to unlock the full suite of productivity features tailored for creative professionals.',
 	title: 'Sign Up',
 };
 

@@ -2,12 +2,12 @@
 
 import { startTransition, useEffect, useState } from 'react';
 
-import { MonitorIcon, MoonIcon, SunIcon } from 'lucide-react';
+import { MoonIcon, SunIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/ui/button';
 
-const THEME_ORDER = ['light', 'dark', 'system'] as const;
+const THEME_ORDER = ['light', 'dark'] as const;
 type ThemeValue = (typeof THEME_ORDER)[number];
 
 export const ThemeToggle = () => {
@@ -29,8 +29,7 @@ export const ThemeToggle = () => {
 		);
 	}
 
-	const currentTheme = (theme ?? 'system') as ThemeValue;
-	const effectiveDark = (resolvedTheme ?? 'light') === 'dark';
+	const currentTheme = (theme ?? resolvedTheme ?? 'light') as ThemeValue;
 
 	const handleToggle = () => {
 		const nextIndex = (THEME_ORDER.indexOf(currentTheme) + 1) % THEME_ORDER.length;
@@ -38,12 +37,11 @@ export const ThemeToggle = () => {
 	};
 
 	const titles: Record<ThemeValue, string> = {
-		dark: 'Dark mode (next: system)',
+		dark: 'Dark mode (next: light)',
 		light: 'Light mode (next: dark)',
-		system: `System theme (next: light)${effectiveDark ? ' · currently dark' : ' · currently light'}`,
 	};
 
-	const Icon = currentTheme === 'light' ? SunIcon : currentTheme === 'dark' ? MoonIcon : MonitorIcon;
+	const Icon = currentTheme === 'light' ? SunIcon : MoonIcon;
 
 	return (
 		<Button size='icon' variant='outline' className='rounded-full' onClick={handleToggle} title={titles[currentTheme]}>

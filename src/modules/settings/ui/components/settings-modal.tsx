@@ -14,7 +14,7 @@ export const SettingsModal = () => {
 			open={isOpen}
 			onOpenChange={onClose}
 			title='AI Settings'
-			description='Unlock the full potential of your Vibe AI assistant with personalized settings and preferences.'
+			description='Unlock the full potential of your Nova AI assistant with personalized settings and preferences.'
 		>
 			<AISettingsForm />
 		</ResponsiveDialog>

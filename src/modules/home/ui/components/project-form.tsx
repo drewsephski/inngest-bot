@@ -7,7 +7,18 @@ import { useClerk } from '@clerk/nextjs';
 import { dark } from '@clerk/themes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowUpIcon } from 'lucide-react';
+import {
+	ArrowUpIcon,
+	Film,
+	FolderTree,
+	Home,
+	Kanban,
+	LayoutDashboard,
+	Music,
+	Play,
+	ShoppingBag,
+	type LucideIcon,
+} from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
@@ -24,6 +35,17 @@ import { cn } from '@/lib/utils';
 import { useTRPC } from '@/trpc/client';
 
 const STORAGE_KEY = 'project-form-value';
+
+const iconMap: Record<string, LucideIcon> = {
+	Film,
+	FolderTree,
+	Home,
+	Kanban,
+	LayoutDashboard,
+	Music,
+	Play,
+	ShoppingBag,
+};
 
 export const ProjectForm = () => {
 	const router = useRouter();
@@ -169,20 +191,24 @@ export const ProjectForm = () => {
 				</form>
 
 				<div className='hidden max-w-3xl flex-wrap justify-center gap-2 md:flex'>
-					{PROJECT_TEMPLATES.map((template) => (
-						<Button
-							key={template.title}
-							variant='outline'
-							size='sm'
-							className='dark:bg-sidebar bg-white'
-							onClick={() => {
-								onSelect(template.prompt);
-								form.setFocus('value');
-							}}
-						>
-							{template.emoji} {template.title}
-						</Button>
-					))}
+					{PROJECT_TEMPLATES.map((template) => {
+						const Icon = iconMap[template.icon];
+						return (
+							<Button
+								key={template.title}
+								variant='outline'
+								size='sm'
+								className='bg-background/50 hover:bg-accent hover:border-primary/30 border-border/60 gap-1.5 text-xs transition-all'
+								onClick={() => {
+									onSelect(template.prompt);
+									form.setFocus('value');
+								}}
+							>
+								{Icon && <Icon className='text-muted-foreground size-3.5' />}
+								{template.title}
+							</Button>
+						);
+					})}
 				</div>
 			</section>
 		</Form>

@@ -73,10 +73,16 @@ const ProjectItem = ({ project }: ProjectItemProps) => {
 		<div className='group relative'>
 			<ConfirmDialog />
 
-			<Button variant='outline' className='h-auto w-full justify-start p-4 text-start font-normal' asChild>
+			<Button
+				variant='outline'
+				className='bg-background hover:border-primary/20 hover:bg-accent h-auto w-full justify-start border p-4 text-start font-normal transition-all'
+				asChild
+			>
 				<Link href={`/projects/${project.id}`}>
 					<div className='flex items-center gap-x-4'>
-						<img src='/logo.svg' alt='Vibe logo' width={32} height={32} className='object-contain' />
+						<div className='bg-muted flex size-10 shrink-0 items-center justify-center rounded-lg'>
+							<img src='/logo.svg' alt='Nova logo' width={20} height={20} className='opacity-70' />
+						</div>
 
 						<div className='flex flex-1 flex-col'>
 							<h3 className='truncate font-medium'>{project.name}</h3>
@@ -95,7 +101,7 @@ const ProjectItem = ({ project }: ProjectItemProps) => {
 						disabled={isDeleting}
 						variant='ghost'
 						size='icon'
-						className='absolute top-1/2 right-2 -translate-y-1/2 opacity-100 transition-opacity group-hover:opacity-100 sm:opacity-0'
+						className='absolute top-1/2 right-2 size-7 -translate-y-1/2 opacity-100 transition-opacity group-hover:opacity-100 sm:opacity-0'
 						onClick={(e) => {
 							e.preventDefault();
 							e.stopPropagation();
@@ -107,7 +113,7 @@ const ProjectItem = ({ project }: ProjectItemProps) => {
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align='end'>
 					<DropdownMenuItem onClick={handleRename} disabled={isDeleting}>
-						<PencilIcon className='size-4' />
+						<PencilIcon className='text-muted-foreground size-4' />
 						Rename
 					</DropdownMenuItem>
 
@@ -130,8 +136,13 @@ export const ProjectsList = () => {
 	if (!user) return null;
 
 	return (
-		<div className='dark:bg-sidebar flex w-full flex-col gap-y-6 rounded-xl border bg-white p-8 sm:gap-y-4'>
-			<h2 className='text-2xl font-semibold'>{user?.firstName}&apos;s Vibes</h2>
+		<div className='flex w-full flex-col gap-y-6 rounded-xl border bg-white p-6 sm:gap-y-4 dark:bg-zinc-950/50'>
+			<div className='flex items-center justify-between'>
+				<h2 className='text-lg font-medium'>{user?.firstName}&apos;s Novas</h2>
+				<span className='text-muted-foreground text-sm'>
+					{projects?.length || 0} project{projects?.length !== 1 ? 's' : ''}
+				</span>
+			</div>
 
 			<div className='grid grid-cols-1 gap-6 sm:grid-cols-3'>
 				{projects?.length === 0 && (

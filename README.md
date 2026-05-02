@@ -152,7 +152,7 @@ NEXT_TELEMETRY_DISABLED="1"
 NEXT_PUBLIC_APP_BASE_URL="http://localhost:3000"
 
 # neon db uri
-DATABASE_URL="postgresql://<username>:<password>@<hostname>/Vibe?sslmode=require&channel_binding=require"
+DATABASE_URL="postgresql://<username>:<password>@<hostname>/Nova?sslmode=require&channel_binding=require"
 
 # e2b api key and sandbox template name
 E2B_API_KEY="e2b_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -270,7 +270,7 @@ ngrok config add-authtoken YOUR_AUTH_TOKEN
 
 ## :wrench: Stats
 
-[![Stats for Vibe](/.github/images/stats.svg 'Stats for Vibe')](https://pagespeed.web.dev/analysis?url=https://clone-vibe.vercel.app 'Stats for Vibe')
+[![Stats for Nova](/.github/images/stats.svg 'Stats for Nova')](https://pagespeed.web.dev/analysis?url=https://clone-vibe.vercel.app 'Stats for Nova')
 
 ## :raised_hands: Contribute
 
@@ -278,7 +278,7 @@ You might encounter some bugs while using this app. You are more than welcome to
 
 ## :gem: Acknowledgements
 
-Useful resources and dependencies that are used in Vibe.
+Useful resources and dependencies that are used in Nova.
 
 - Thanks to CodeWithAntonio: https://codewithantonio.com/
 <!--- DEPENDENCIES_START --->

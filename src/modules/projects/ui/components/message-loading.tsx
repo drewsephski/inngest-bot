@@ -34,8 +34,8 @@ export const MessageLoading = () => {
 	return (
 		<div className='group flex flex-col px-2 pb-4'>
 			<div className='mb-2 flex items-center gap-2 pl-2'>
-				<img src='/logo.svg' alt='Vibe logo' width={18} height={18} className='shrink-0' />
-				<span className='text-sm font-medium'>Vibe</span>
+				<img src='/logo.svg' alt='Nova logo' width={18} height={18} className='shrink-0' />
+				<span className='text-sm font-medium'>Nova</span>
 			</div>
 
 			<div className='flex flex-col gap-y-4 pl-8.5'>
