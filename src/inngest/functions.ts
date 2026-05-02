@@ -1,3 +1,4 @@
+// Inngest Bot: Automated agent workflows with code execution
 import { Sandbox } from '@e2b/code-interpreter';
 import {
 	createAgent,
