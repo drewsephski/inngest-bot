@@ -11,6 +11,9 @@ import { db } from '@/lib/db';
 import { decrypt } from '@/lib/encryption';
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init';
 
+const DEFAULT_PAGE_SIZE = 50;
+const MAX_PAGE_SIZE = 100;
+
 export const messagesRouter = createTRPCRouter({
 	create: protectedProcedure
 		.input(
@@ -79,20 +82,34 @@ export const messagesRouter = createTRPCRouter({
 	getMany: protectedProcedure
 		.input(
 			z.object({
+				cursor: z.string().uuid().optional(),
+				limit: z.number().int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE),
 				projectId: z.uuid().trim().min(1, 'Project ID is required'),
 			})
 		)
 		.query(async ({ input, ctx }) => {
-			const { projectId } = input;
+			const { cursor, limit, projectId } = input;
 			const { userId } = ctx.auth;
 
+			// Use cursor-based pagination for better performance
 			const messages = await db.message.findMany({
+				cursor: cursor ? { id: cursor } : undefined,
 				include: {
-					fragment: true,
+					fragment: {
+						select: {
+							createdAt: true,
+							files: true,
+							id: true,
+							sandboxUrl: true,
+							title: true,
+						},
+					},
 				},
 				orderBy: {
-					updatedAt: 'asc',
+					createdAt: 'asc',
 				},
+				skip: cursor ? 1 : 0, // Skip the cursor item if using cursor
+				take: limit + 1, // Take one extra to determine if there's more
 				where: {
 					project: {
 						userId,
@@ -101,6 +118,14 @@ export const messagesRouter = createTRPCRouter({
 				},
 			});
 
-			return messages;
+			// Check if there are more messages
+			const hasMore = messages.length > limit;
+			const items = hasMore ? messages.slice(0, limit) : messages;
+			const nextCursor = hasMore ? items[items.length - 1]?.id : undefined;
+
+			return {
+				items,
+				nextCursor,
+			};
 		}),
 });

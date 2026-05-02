@@ -7,6 +7,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+	--gradient-color: oklch(0.6171 0.1375 39.0427);
+	--sparkles-color: oklch(0.6171 0.1375 39.0427);
 	--background: oklch(0.9818 0.0054 95.0986);
 	--foreground: oklch(0.3438 0.0269 95.7226);
 	--card: oklch(0.9818 0.0054 95.0986);
@@ -56,6 +58,8 @@
 }
 
 .dark {
+	--gradient-color: oklch(0.6724 0.1308 38.7559);
+	--sparkles-color: oklch(0.6724 0.1308 38.7559);
 	--background: oklch(0.2679 0.0036 106.6427);
 	--foreground: oklch(0.8074 0.0142 93.0137);
 	--card: oklch(0.2679 0.0036 106.6427);

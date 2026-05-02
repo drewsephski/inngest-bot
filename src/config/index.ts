@@ -195,5 +195,5 @@ export const SITE_CONFIG: Metadata = {
 } as const;
 
 export const LINKS = {
-	SOURCE_CODE: 'https://github.com/sanidhyy/lovable-clone',
+	INSTAGRAM: 'https://instagram.com/drew.sepeczi',
 } as const;

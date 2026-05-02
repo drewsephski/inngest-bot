@@ -3,6 +3,7 @@ import { RateLimiterPrisma } from 'rate-limiter-flexible';
 
 import { DURATION, FREE_POINTS, GENERATION_COST, PRO_POINTS } from '@/modules/usage/config';
 
+import { logAuditEvent, trackUsageAnalytics } from '@/lib/audit';
 import { db } from '@/lib/db';
 
 export const getUsageTracker = async () => {
@@ -26,6 +27,22 @@ export const consumeCredits = async () => {
 
 	const usageTracker = await getUsageTracker();
 	const result = await usageTracker.consume(userId, GENERATION_COST);
+
+	// Log the credit consumption asynchronously (don't block)
+	void logAuditEvent({
+		action: 'CREDIT_CONSUMED' as const,
+		details: {
+			consumed: GENERATION_COST,
+			remaining: result.remainingPoints,
+		},
+		userId,
+	});
+
+	// Track usage analytics asynchronously
+	void trackUsageAnalytics({
+		creditsConsumed: GENERATION_COST,
+		userId,
+	});
 
 	return result;
 };
@@ -78,6 +95,11 @@ export const resetUsageForProUpgrade = async () => {
 		throw new Error('User does not have pro access');
 	}
 
+	// Get current usage before deleting for audit log
+	const currentUsage = await db.usage.findUnique({
+		where: { key: userId },
+	});
+
 	// Delete the existing usage record to force a fresh start with pro limits
 	await db.usage.delete({
 		where: {
@@ -87,7 +109,28 @@ export const resetUsageForProUpgrade = async () => {
 
 	// Create a new usage tracker with pro limits and consume to initialize
 	const usageTracker = await getUsageTracker();
-	await usageTracker.consume(userId, 0); // This will create a new record with pro limits
+	const result = await usageTracker.consume(userId, 0); // This will create a new record with pro limits
 
-	return true;
+	// Log the pro upgrade asynchronously
+	void logAuditEvent({
+		action: 'PRO_UPGRADE' as const,
+		details: {
+			newPoints: PRO_POINTS,
+			previousPoints: currentUsage?.points ?? 0,
+		},
+		userId,
+	});
+
+	// Log the credit reset asynchronously
+	void logAuditEvent({
+		action: 'CREDIT_RESET' as const,
+		details: {
+			newTotal: PRO_POINTS,
+			previousTotal: currentUsage?.points ?? 0,
+			reason: 'pro_upgrade',
+		},
+		userId,
+	});
+
+	return { points: result.remainingPoints, success: true };
 };

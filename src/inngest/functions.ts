@@ -16,6 +16,7 @@ import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from '@/config';
 import { SANDBOX_TIMEOUT } from '@/constants';
 import { env } from '@/env/server';
 import { MessageRole, MessageType } from '@/generated/prisma/client';
+import { trackUsageAnalytics } from '@/lib/audit';
 import { db } from '@/lib/db';
 import { decrypt } from '@/lib/encryption';
 import { generateTextFromMessage } from '@/lib/utils';
@@ -33,6 +34,8 @@ export const codeAgentFunction = inngest.createFunction(
 	async ({ event, step }) => {
 		const projectId = event.data.projectId as string;
 
+		let userId: string;
+
 		const { apiKey, provider } = await step.run('get-api-key', async () => {
 			const project = await db.project.findUnique({
 				select: {
@@ -44,6 +47,8 @@ export const codeAgentFunction = inngest.createFunction(
 			});
 
 			if (!project) throw new NonRetriableError('Project not found');
+
+			userId = project.userId;
 
 			const settings = await db.userSettings.findUnique({
 				where: {
@@ -280,6 +285,13 @@ export const codeAgentFunction = inngest.createFunction(
 		});
 
 		await step.run('save-result', async () => {
+			// Track usage analytics asynchronously
+			void trackUsageAnalytics({
+				aiRequests: 1,
+				provider,
+				userId,
+			});
+
 			if (isError) {
 				return await db.message.create({
 					data: {

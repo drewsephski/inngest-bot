@@ -17,6 +17,9 @@ model Project {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([userId])
 }
 
 enum MessageRole {
@@ -31,7 +34,7 @@ enum MessageType {
 
 model Message {
   id      String      @id @default(uuid())
-  content String
+  content String      @db.Text
   role    MessageRole
   type    MessageType
 
@@ -42,6 +45,10 @@ model Message {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([projectId, createdAt])
+  @@index([projectId])
+  @@index([createdAt])
 }
 
 model Fragment {
@@ -52,16 +59,21 @@ model Fragment {
 
   sandboxUrl String
   title      String
-  files      Json
+  files      Json @db.JsonB
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([messageId])
+  @@index([createdAt])
 }
 
 model Usage {
   key    String    @id
   points Int
   expire DateTime?
+
+  @@index([expire])
 }
 
 enum AIProvider {
@@ -76,4 +88,47 @@ model UserSettings {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+
+// Audit log for credit consumption and important events
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    AuditAction
+  details   Json?    @db.JsonB
+  metadata  Json?    @db.JsonB
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([action, createdAt])
+  @@index([createdAt])
+}
+
+enum AuditAction {
+  CREDIT_CONSUMED
+  CREDIT_RESET
+  PRO_UPGRADE
+  PROJECT_CREATED
+  PROJECT_DELETED
+  MESSAGE_SENT
+  AI_SETTINGS_UPDATED
+  AI_SETTINGS_DELETED
+}
+
+// Usage analytics for tracking and reporting
+model UsageAnalytics {
+  id              String   @id @default(uuid())
+  userId          String
+  date            DateTime @default(now()) @db.Date
+  creditsConsumed Int      @default(0)
+  projectsCreated Int    @default(0)
+  messagesSent    Int    @default(0)
+  aiRequests      Int      @default(0)
+  provider        AIProvider?
+  
+  @@unique([userId, date])
+  @@index([userId, date])
+  @@index([date])
 }

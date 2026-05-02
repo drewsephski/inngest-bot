@@ -18,6 +18,7 @@ export const env = createEnv({
 	},
 	server: {
 		CLERK_SECRET_KEY: z.string().trim().min(1).startsWith('sk_'),
+		CLERK_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
 		CRON_SECRET: z.string().trim().min(1),
 		DATABASE_URL: z.url().trim(),
 		E2B_API_KEY: z.string().trim().min(1).startsWith('e2b_'),

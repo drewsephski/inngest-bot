@@ -4,6 +4,7 @@ import { OpenAI } from 'openai';
 
 import type { AIProvider } from '@/generated/prisma/enums';
 import { verifyOpenRouterApiKey } from '@/lib/openrouter';
+import { isAIRetryableError, withRetry } from '@/lib/retry';
 import { getAISettingsErrorMessage } from '@/lib/utils';
 
 const verifyOpenAISettings = async (apiKey: string) => {
@@ -12,15 +13,24 @@ const verifyOpenAISettings = async (apiKey: string) => {
 	});
 
 	// Verify API key and that account has credits by sending a minimal chat request
-	const completion = await openai.chat.completions.create({
-		max_completion_tokens: 5, // eslint-disable-line camelcase -- OpenAI API parameter
-		messages: [{ content: 'hi', role: 'user' }],
-		model: 'gpt-4o-mini',
-	});
+	// Use retry logic for transient failures
+	return withRetry(
+		async () => {
+			const completion = await openai.chat.completions.create({
+				max_completion_tokens: 5, // eslint-disable-line camelcase -- OpenAI API parameter
+				messages: [{ content: 'hi', role: 'user' }],
+				model: 'gpt-4o-mini',
+			});
 
-	if (!completion.choices[0]?.message?.content) throw new Error('No response from API');
+			if (!completion.choices[0]?.message?.content) throw new Error('No response from API');
 
-	return true;
+			return true;
+		},
+		{
+			isRetryable: isAIRetryableError,
+			maxRetries: 2,
+		}
+	);
 };
 
 const verifyOpenRouterSettings = async (apiKey: string) => {
@@ -33,14 +43,22 @@ const verifyOpenRouterSettings = async (apiKey: string) => {
 		throw new Error('Invalid OpenRouter API key. Too short');
 	}
 
-	// Use the proper OpenRouter SDK for API verification
-	const result = await verifyOpenRouterApiKey(apiKey);
+	// Use the proper OpenRouter SDK for API verification with retry
+	return withRetry(
+		async () => {
+			const result = await verifyOpenRouterApiKey(apiKey);
 
-	if (!result.success) {
-		throw new Error(result.error || 'Failed to verify OpenRouter API key');
-	}
+			if (!result.success) {
+				throw new Error(result.error || 'Failed to verify OpenRouter API key');
+			}
 
-	return true;
+			return true;
+		},
+		{
+			isRetryable: isAIRetryableError,
+			maxRetries: 2,
+		}
+	);
 };
 
 export const verifyAISettings = async (apiKey: string, provider: AIProvider) => {

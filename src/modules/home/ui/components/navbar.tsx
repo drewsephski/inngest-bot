@@ -4,6 +4,8 @@ import Link from 'next/link';
 
 import { ClerkLoaded, ClerkLoading, Show, SignInButton, SignUpButton } from '@clerk/nextjs';
 
+import { CreditsBadge } from '@/modules/usage/ui/components/credits-badge';
+
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,7 +14,6 @@ import { LINKS } from '@/config';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useScroll } from '@/hooks/use-scroll';
 import { cn } from '@/lib/utils';
-import { CreditsBadge } from '@/modules/usage/ui/components/credits-badge';
 
 export const Navbar = () => {
 	const isScrolled = useScroll();
@@ -67,13 +68,13 @@ export const Navbar = () => {
 					<ThemeToggle />
 
 					<Link
-						href={LINKS.SOURCE_CODE}
+						href={LINKS.INSTAGRAM}
 						target='_blank'
 						rel='noopener noreferrer'
-						className='hover:opacity-75 dark:invert'
+						className='opacity-75 hover:opacity-100'
 					>
-						<img src='/github.svg' alt='GitHub' height={32} width={32} />
-						<span className='sr-only'>Source Code</span>
+						<img src='https://svgl.app/library/instagram-icon.svg' alt='Instagram' height={28} width={28} />
+						<span className='sr-only'>Instagram</span>
 					</Link>
 				</div>
 			</div>

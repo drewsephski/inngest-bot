@@ -46,6 +46,7 @@
 Here is the folder structure of this app.
 
 <!--- FOLDER_STRUCTURE_START --->
+
 ```bash
 lovable-clone/
   |- prisma/
@@ -133,6 +134,7 @@ lovable-clone/
   |- tsconfig.json
   |- vercel.ts
 ```
+
 <!--- FOLDER_STRUCTURE_END --->
 
 <br />
@@ -240,7 +242,7 @@ NEXT_PUBLIC_APP_BASE_URL="http://localhost:3000"
 ---
 
 ### 11. Ngrok
-  
+
 - Download Ngrok: https://ngrok.com/download
 - Sign up at [Ngrok](https://ngrok.com/) and copy your auth token from the dashboard.
 - Authenticate ngrok locally:
