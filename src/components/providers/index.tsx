@@ -1,4 +1,4 @@
-import type { PropsWithChildren } from 'react';
+import { Suspense, type PropsWithChildren } from 'react';
 
 import { ClerkProvider, GoogleOneTap } from '@clerk/nextjs';
 import { ThemeProvider } from 'next-themes';
@@ -32,7 +32,9 @@ export const Providers = ({ children }: Readonly<PropsWithChildren>) => {
 
 					<ModalProvider />
 					<ToasterProvider />
-					<SubscriptionSuccessToast />
+					<Suspense>
+						<SubscriptionSuccessToast />
+					</Suspense>
 					<GoogleOneTap />
 				</ThemeProvider>
 			</TRPCReactProvider>

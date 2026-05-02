@@ -39,7 +39,7 @@ export const AISettingsForm = () => {
 
 	const { data: aiSettings, isLoading } = useQuery(trpc.settings.getAISettings.queryOptions());
 
-	type AISettingsFormValues = z.infer<typeof AISettingsSchema>;
+	type AISettingsFormValues = z.output<typeof AISettingsSchema>;
 
 	const form = useForm<AISettingsFormValues>({
 		defaultValues: {
@@ -47,7 +47,8 @@ export const AISettingsForm = () => {
 			provider: (aiSettings?.provider as AISettingsFormValues['provider']) || 'OPENROUTER',
 			useAppKey: aiSettings?.useAppKey ?? false,
 		},
-		resolver: zodResolver(AISettingsSchema),
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		resolver: zodResolver(AISettingsSchema) as any,
 	});
 
 	const saveAISettings = useMutation(
