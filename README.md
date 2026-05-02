@@ -78,6 +78,8 @@ lovable-clone/
       |--- hint.tsx
       |--- loading-state.tsx
       |--- responsive-dialog.tsx
+      |--- route-error.tsx
+      |--- safe-external-link.tsx
       |--- settings-modal.tsx
       |--- theme-toggle.tsx
       |--- tree-view.tsx
@@ -122,6 +124,7 @@ lovable-clone/
       |--- server.tsx
     |-- types/
       |--- index.ts
+    |-- middleware.ts
     |-- proxy.ts
   |- .gitignore
   |- .prettierignore
